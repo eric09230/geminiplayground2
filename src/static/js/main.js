@@ -1,4 +1,4 @@
-import { MultimodalLiveClient } from './core/websocket-client.js';
+    import { MultimodalLiveClient } from './core/websocket-client.js';
 import { AudioStreamer } from './audio/audio-streamer.js';
 import { AudioRecorder } from './audio/audio-recorder.js';
 import { CONFIG } from './config/config.js';
@@ -195,24 +195,43 @@ const client = new MultimodalLiveClient();
  * @param {string} message - The message to log.
  * @param {string} [type='system'] - The type of the message (system, user, ai).
  */
-// 處理虛擬鍵盤
+// 處理虛擬鍵盤和視口高度
 function handleVisualViewport() {
     const viewport = window.visualViewport;
     if (!viewport) return;
 
     function onViewportChange() {
-        const currentHeight = viewport.height;
-        document.body.style.height = `${currentHeight}px`;
-        // 確保對話框在鍵盤彈出時可見
+        // 設置視口高度CSS變量
+        const vh = viewport.height * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+
+        // 調整聊天容器的滾動位置
+        const logsContainer = document.getElementById('logs-container');
         if (document.activeElement === messageInput) {
+            // 當鍵盤彈出時，確保輸入框可見
             setTimeout(() => {
-                messageInput.scrollIntoView({ behavior: 'smooth' });
+                const lastMessage = logsContainer.lastElementChild;
+                if (lastMessage) {
+                    lastMessage.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                }
+            }, 100);
+        } else {
+            // 當鍵盤收起時，滾動到最新消息
+            setTimeout(() => {
+                const lastMessage = logsContainer.lastElementChild;
+                if (lastMessage) {
+                    lastMessage.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                }
             }, 100);
         }
     }
 
+    // 監聽視口變化
     viewport.addEventListener('resize', onViewportChange);
     viewport.addEventListener('scroll', onViewportChange);
+
+    // 初始化視口高度
+    onViewportChange();
 }
 
 function logMessage(message, type = 'system') {
@@ -248,12 +267,20 @@ function logMessage(message, type = 'system') {
     messageText.textContent = message;
     logEntry.appendChild(messageText);
 
+    // 在添加新消息前獲取當前滾動位置
+    const isScrolledToBottom = logsContainer.scrollHeight - logsContainer.clientHeight <= logsContainer.scrollTop + 1;
+
     logsContainer.appendChild(logEntry);
     
-    // 平滑滾動到最新消息
-    setTimeout(() => {
-        logEntry.scrollIntoView({ behavior: 'smooth', block: 'end' });
-    }, 100);
+    // 只有在滾動到底部時才自動滾動
+    if (isScrolledToBottom || type === 'user') {
+        setTimeout(() => {
+            logEntry.scrollIntoView({
+                behavior: 'smooth',
+                block: 'end'
+            });
+        }, 100);
+    }
 }
 
 // 初始化視口處理
@@ -492,35 +519,52 @@ function handleSendMessage() {
         messageInput.value = '';
         // 重置輸入框高度
         messageInput.style.height = '48px';
+        
         // 在移動端，發送後將焦點從輸入框移除，收起虛擬鍵盤
         if (window.innerWidth <= 768) {
             messageInput.blur();
+            // 確保消息顯示在可見區域
+            setTimeout(() => {
+                const lastMessage = logsContainer.lastElementChild;
+                if (lastMessage) {
+                    lastMessage.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                }
+            }, 150);
         }
     }
 }
 
-// 處理輸入框焦點
+// 處理輸入框焦點和大小調整
+let resizeTimeout;
 messageInput.addEventListener('focus', () => {
     if (window.innerWidth <= 768) {
-        // 在移動端，輸入框獲得焦點時，等待虛擬鍵盤彈出後滾動
+        // 在移動端，輸入框獲得焦點時，等待虛擬鍵盤彈出後調整視圖
         setTimeout(() => {
-            messageInput.scrollIntoView({ behavior: 'smooth' });
+            const lastMessage = logsContainer.lastElementChild;
+            if (lastMessage) {
+                lastMessage.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            }
         }, 300);
     }
 });
 
-// 防止輸入框在移動端的彈跳效果
-document.documentElement.style.setProperty(
-    '--vh',
-    `${window.innerHeight * 0.01}px`
-);
+// 優化輸入框大小調整
+function adjustTextareaHeight() {
+    messageInput.style.height = '48px';
+    const newHeight = Math.min(messageInput.scrollHeight, 150);
+    messageInput.style.height = newHeight + 'px';
+    
+    // 調整後確保最新消息可見
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+        const lastMessage = logsContainer.lastElementChild;
+        if (lastMessage) {
+            lastMessage.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }
+    }, 100);
+}
 
-window.addEventListener('resize', () => {
-    document.documentElement.style.setProperty(
-        '--vh',
-        `${window.innerHeight * 0.01}px`
-    );
-});
+messageInput.addEventListener('input', adjustTextareaHeight);
 
 // Event Listeners
 client.on('open', () => {

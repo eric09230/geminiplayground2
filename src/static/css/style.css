@@ -11,6 +11,8 @@
     --shadow-1: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
     --shadow-2: 0 2px 6px 2px rgba(60,64,67,0.15);
     --transition: all 0.2s ease;
+    --header-height: 60px;
+    --footer-height: 140px;
 }
 
 * {
@@ -24,6 +26,8 @@ body {
     background-color: var(--background-color);
     color: var(--text-primary);
     line-height: 1.5;
+    height: 100vh;
+    overflow: hidden;
 }
 
 #app {
@@ -32,51 +36,53 @@ body {
     padding: 20px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
     height: 100vh;
-    overflow: hidden;
+    position: relative;
 }
 
 /* Logs Container */
 #logs-container {
+    flex: 1;
     background: var(--surface-color);
     border-radius: 12px;
     padding: 20px;
-    height: calc(100vh - 180px);
+    margin-bottom: 20px;
     overflow-y: auto;
     box-shadow: var(--shadow-1);
-    margin-bottom: 12px;
+    height: calc(100vh - var(--header-height) - var(--footer-height));
+    min-height: 200px;
 }
 
 /* Header */
-.api-input-container {
-    position: fixed;
-    bottom: 120px;
-    left: 50%;
-    transform: translateX(-50%);
+.header {
     background: var(--surface-color);
-    padding: 12px;
-    border-radius: 8px;
+    padding: 16px;
+    border-radius: 12px;
     box-shadow: var(--shadow-1);
-    display: flex;
-    gap: 8px;
+    height: var(--header-height);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.api-input-container {
     transition: var(--transition);
-    z-index: 1000;
+    flex: 1;
 }
 
 .api-input-container.hidden {
     display: none;
 }
 
-.api-input-container input {
-    width: 300px;
+.header-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    align-items: center;
 }
 
-#api-confirm {
-    width: 40px;
-    height: 40px;
-    padding: 0;
-    border-radius: 50%;
+.header.hidden {
+    display: none;
 }
 
 #api-key {
@@ -140,22 +146,9 @@ body {
     flex-shrink: 0;
 }
 
-.settings-input,
 select {
     flex: 1;
     min-width: 200px;
-    padding: 8px 12px;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    font-size: 14px;
-    outline: none;
-    transition: var(--transition);
-}
-
-.settings-input:focus,
-select:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px rgba(26,115,232,0.2);
 }
 
 input[type="number"] {
@@ -243,6 +236,10 @@ button:disabled {
     display: flex;
     align-items: center;
     justify-content: center;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 101;
 }
 
 #config-toggle:hover {
@@ -263,7 +260,10 @@ button:disabled {
     padding: 20px;
     border-radius: 12px;
     box-shadow: var(--shadow-1);
-    margin-top: auto;
+    position: sticky;
+    bottom: 0;
+    z-index: 100;
+    height: var(--footer-height);
 }
 
 .input-container {
@@ -281,11 +281,7 @@ button:disabled {
     outline: none;
     transition: var(--transition);
     resize: none;
-    min-height: 48px;
     max-height: 150px;
-    overflow-y: auto;
-    word-wrap: break-word;
-    line-height: 1.5;
 }
 
 #message-input:focus {
@@ -297,47 +293,6 @@ button:disabled {
     display: flex;
     gap: 8px;
     justify-content: center;
-    margin-top: 8px;
-}
-
-#send-button,
-#mic-button,
-#camera-button,
-#screen-button,
-#connect-button,
-#config-toggle {
-    width: 48px;
-    height: 48px;
-    padding: 0;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--surface-color);
-    color: var(--text-secondary);
-    box-shadow: var(--shadow-1);
-    transition: var(--transition);
-}
-
-#send-button:hover,
-#mic-button:hover,
-#camera-button:hover,
-#screen-button:hover,
-#connect-button:hover,
-#config-toggle:hover {
-    background: var(--primary-color);
-    color: white;
-    transform: translateY(-2px);
-}
-
-#send-button.active,
-#mic-button.active,
-#camera-button.active,
-#screen-button.active,
-#connect-button.active,
-#config-toggle.active {
-    background: var(--primary-color);
-    color: white;
 }
 
 #send-button,
@@ -351,18 +306,6 @@ button:disabled {
     height: 48px;
     padding: 0;
     border-radius: 50%;
-}
-
-/* Logs Container */
-#logs-container {
-    background: var(--surface-color);
-    border-radius: 12px;
-    padding: 20px;
-    height: calc(100vh - 300px);
-    overflow-y: auto;
-    box-shadow: var(--shadow-1);
-    margin: 20px 0;
-    flex: 1;
 }
 
 .log-entry {
@@ -426,15 +369,6 @@ button:disabled {
     background: rgba(95,99,104,0.1);
     border-radius: 6px;
     overflow: hidden;
-}
-
-/* API Input Container */
-.api-input-container {
-    margin-top: auto;
-    padding: 16px;
-    background: var(--surface-color);
-    border-radius: 12px;
-    box-shadow: var(--shadow-1);
 }
 
 .audio-bar {
@@ -532,84 +466,44 @@ button:not(:disabled):active {
 
 /* Responsive Design */
 @media (max-width: 768px) {
+    :root {
+        --header-height: 50px;
+        --footer-height: 120px;
+    }
+
     body {
         height: 100vh;
-        height: -webkit-fill-available;
-        overflow: hidden;
+        height: calc(var(--vh, 1vh) * 100);
     }
 
     #app {
-        padding: 6px;
-        gap: 4px;
-        height: 100vh;
-        height: -webkit-fill-available;
-        display: flex;
-        flex-direction: column;
+        padding: 10px;
+        gap: 8px;
+        height: 100%;
     }
 
     #logs-container {
-        flex: 1;
-        min-height: 0;
-        max-height: calc(100vh - 280px);
-        overflow-y: auto;
-        margin-bottom: 4px;
-        padding: 12px;
-    }
-
-    .log-entry {
-        padding: 6px 8px;
-        margin-bottom: 4px;
-        font-size: 14px;
-    }
-
-    .audio-visualizers {
-        flex-direction: row;
-        gap: 4px;
-        margin: 4px 0;
-        max-height: 40px;
-    }
-
-    .visualizer-container {
-        flex: 1;
-        min-width: 0;
-        padding: 4px 6px;
-    }
-
-    .visualizer-container label {
-        font-size: 10px;
-        white-space: nowrap;
-        margin-bottom: 2px;
+        height: calc(100vh - var(--header-height) - var(--footer-height));
+        min-height: 150px;
+        margin-bottom: 10px;
     }
 
     .chat-controls {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: var(--background-color);
-        padding: 8px 6px;
-        margin: 0;
-        z-index: 100;
-        box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
+        padding: 10px;
+        gap: 8px;
     }
 
     .input-container {
         flex-direction: row;
-        align-items: flex-end;
-        gap: 4px;
     }
 
     #message-input {
-        flex: 1;
-        max-height: 100px;
-        padding: 8px 12px;
         font-size: 14px;
+        padding: 8px 12px;
     }
 
     .media-buttons {
         justify-content: space-evenly;
-        gap: 4px;
-        margin-top: 4px;
     }
 
     #send-button,
@@ -618,44 +512,35 @@ button:not(:disabled):active {
     #screen-button {
         width: 40px;
         height: 40px;
-        padding: 0;
     }
 
     .header {
-        padding: 8px;
-        margin-top: 4px;
-        margin-bottom: 60px;
+        padding: 12px;
+        height: var(--header-height);
     }
 
-    .header-buttons {
-        justify-content: space-between;
-    }
-
-    #api-key {
-        margin-bottom: 6px;
-        padding: 8px 12px;
-        font-size: 14px;
-    }
-
-    .video-controls {
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 4px;
+    #config-toggle {
+        top: 10px;
+        right: 10px;
     }
 
     #config-container {
         width: 95vw;
-        max-height: 75vh;
+        max-height: 80vh;
         padding: 16px;
     }
 
     .setting-container {
-        gap: 8px;
-        margin-bottom: 12px;
+        flex-direction: column;
+        align-items: flex-start;
     }
 
     .setting-label {
-        min-width: 140px;
-        font-size: 13px;
+        min-width: auto;
+    }
+
+    select {
+        width: 100%;
+        min-width: auto;
     }
 }

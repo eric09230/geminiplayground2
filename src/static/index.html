@@ -19,10 +19,6 @@
         <div id="config-container" class="hidden-mobile">
             <div class="config-wrapper">
                 <div class="setting-container">
-                    <span class="setting-label">API Key: </span>
-                    <input type="password" id="api-key" class="settings-input" placeholder="Please Input Gemini API Key" />
-                </div>
-                <div class="setting-container">
                     <span class="setting-label">Sound: </span>
                     <select id="voice-select">
                         <option value="Puck">Puck (Male)</option>
@@ -70,7 +66,7 @@
         </div>
         <div class="chat-controls">
             <div class="input-container">
-                <textarea id="message-input" placeholder="Enter message..." rows="1"></textarea>
+                <input type="text" id="message-input" placeholder="Enter message...">
                 <button id="send-button">
                     <span class="material-symbols-outlined">send</span>
                 </button>
@@ -85,9 +81,14 @@
                 <button id="screen-button">
                     <span id="screen-icon" class="material-symbols-outlined">screen_share</span>
                 </button>
-                <button id="connect-button">
-                    <span class="material-symbols-outlined">cloud_off</span>
-                </button>
+            </div>
+        </div>
+        <div class="header">
+            <div class="api-input-container">
+                <input type="password" id="api-key" placeholder="Please Input Gemini API Key" />
+            </div>
+            <div class="header-buttons">
+                <button id="connect-button">Connect</button>
                 <button id="config-toggle" class="material-symbols-outlined">settings</button>
             </div>
         </div>
