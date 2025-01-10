@@ -39,40 +39,44 @@ body {
 
 /* Logs Container */
 #logs-container {
-    flex: 1;
-    min-height: 300px;
+    background: var(--surface-color);
+    border-radius: 12px;
+    padding: 20px;
+    height: calc(100vh - 180px);
+    overflow-y: auto;
+    box-shadow: var(--shadow-1);
+    margin-bottom: 12px;
 }
 
 /* Header */
-.header {
-    background: var(--surface-color);
-    padding: 16px;
-    border-radius: 12px;
-    box-shadow: var(--shadow-1);
-    margin-top: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
 .api-input-container {
+    position: fixed;
+    bottom: 120px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--surface-color);
+    padding: 12px;
+    border-radius: 8px;
+    box-shadow: var(--shadow-1);
+    display: flex;
+    gap: 8px;
     transition: var(--transition);
-    flex: 1;
+    z-index: 1000;
 }
 
 .api-input-container.hidden {
     display: none;
 }
 
-.header-buttons {
-    display: flex;
-    gap: 12px;
-    justify-content: flex-end;
-    align-items: center;
+.api-input-container input {
+    width: 300px;
 }
 
-.header.hidden {
-    display: none;
+#api-confirm {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border-radius: 50%;
 }
 
 #api-key {
@@ -280,6 +284,47 @@ button:disabled {
     display: flex;
     gap: 8px;
     justify-content: center;
+    margin-top: 8px;
+}
+
+#send-button,
+#mic-button,
+#camera-button,
+#screen-button,
+#connect-button,
+#config-toggle {
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface-color);
+    color: var(--text-secondary);
+    box-shadow: var(--shadow-1);
+    transition: var(--transition);
+}
+
+#send-button:hover,
+#mic-button:hover,
+#camera-button:hover,
+#screen-button:hover,
+#connect-button:hover,
+#config-toggle:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+}
+
+#send-button.active,
+#mic-button.active,
+#camera-button.active,
+#screen-button.active,
+#connect-button.active,
+#config-toggle.active {
+    background: var(--primary-color);
+    color: white;
 }
 
 #send-button,
