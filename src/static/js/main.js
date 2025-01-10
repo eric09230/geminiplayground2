@@ -159,7 +159,10 @@ configToggle.addEventListener('click', () => {
     modalBackdrop.classList.toggle('active');
 });
 
-applyConfigButton.addEventListener('click', () => {
+applyConfigButton.addEventListener('click', async () => {
+    if (!isConnected) {
+        await connectToWebsocket();
+    }
     configContainer.classList.toggle('active');
     configToggle.classList.toggle('active');
     modalBackdrop.classList.toggle('active');
@@ -418,7 +421,8 @@ async function connectToWebsocket() {
         await client.connect(config,apiKeyInput.value);
         isConnected = true;
         await resumeAudioContext();
-        connectButton.textContent = 'Disconnect';
+        const connectIcon = connectButton.querySelector('.material-symbols-outlined');
+        connectIcon.textContent = 'cloud_done';
         connectButton.classList.add('connected');
         messageInput.disabled = false;
         sendButton.disabled = false;
@@ -457,7 +461,8 @@ function disconnectFromWebsocket() {
         isRecording = false;
         updateMicIcon();
     }
-    connectButton.textContent = 'Connect';
+    const connectIcon = connectButton.querySelector('.material-symbols-outlined');
+    connectIcon.textContent = 'cloud_off';
     connectButton.classList.remove('connected');
     messageInput.disabled = true;
     sendButton.disabled = true;
