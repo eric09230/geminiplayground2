@@ -52,33 +52,69 @@ const TRANSLATE_INSTRUCTION = `You are a Chinese-English translator. Follow thes
 6.Preserve the original formatting and punctuation style where appropriate
 7.Keep any proper nouns, brand names, or technical terms in their commonly accepted translations`;
 
-// Reset instruction button handler
+// 保存原始的default prompt
+const DEFAULT_INSTRUCTION = CONFIG.SYSTEM_INSTRUCTION.TEXT;
+
+// 更新按鈕狀態的函數
+function updatePromptButtonsState(activeType) {
+    resetInstructionButton.classList.toggle('active', activeType === 'default');
+    translateInstructionButton.classList.toggle('active', activeType === 'translate');
+    customInstructionButton.classList.toggle('active', activeType === 'custom');
+}
+
+// Reset instruction button handler - 重置為default prompt
 resetInstructionButton.addEventListener('click', () => {
-    systemInstructionInput.value = CONFIG.SYSTEM_INSTRUCTION.TEXT;
-    localStorage.removeItem('system_instruction');
+    systemInstructionInput.value = DEFAULT_INSTRUCTION;
+    localStorage.setItem('current_prompt_type', 'default');
+    updatePromptButtonsState('default');
 });
 
-// Translate instruction button handler
+// Translate instruction button handler - 設置翻譯prompt
 translateInstructionButton.addEventListener('click', () => {
     systemInstructionInput.value = TRANSLATE_INSTRUCTION;
-    localStorage.setItem('system_instruction', TRANSLATE_INSTRUCTION);
+    localStorage.setItem('current_prompt_type', 'translate');
+    updatePromptButtonsState('translate');
 });
 
-// Custom instruction button handler
+// Custom instruction button handler - 設置自定義prompt
 customInstructionButton.addEventListener('click', () => {
     const savedCustomPrompt = localStorage.getItem('custom_prompt');
     if (savedCustomPrompt) {
         systemInstructionInput.value = savedCustomPrompt;
-        localStorage.setItem('system_instruction', savedCustomPrompt);
+        localStorage.setItem('current_prompt_type', 'custom');
+        updatePromptButtonsState('custom');
     } else {
         const customPrompt = prompt('請輸入您的自定義prompt：');
         if (customPrompt) {
             systemInstructionInput.value = customPrompt;
             localStorage.setItem('custom_prompt', customPrompt);
-            localStorage.setItem('system_instruction', customPrompt);
+            localStorage.setItem('current_prompt_type', 'custom');
+            updatePromptButtonsState('custom');
         }
     }
 });
+
+// 根據上次使用的prompt類型加載對應的prompt
+const lastPromptType = localStorage.getItem('current_prompt_type') || 'default';
+switch (lastPromptType) {
+    case 'translate':
+        systemInstructionInput.value = TRANSLATE_INSTRUCTION;
+        break;
+    case 'custom':
+        const savedCustomPrompt = localStorage.getItem('custom_prompt');
+        if (savedCustomPrompt) {
+            systemInstructionInput.value = savedCustomPrompt;
+        } else {
+            systemInstructionInput.value = DEFAULT_INSTRUCTION;
+            lastPromptType = 'default';
+        }
+        break;
+    default:
+        systemInstructionInput.value = DEFAULT_INSTRUCTION;
+}
+
+// 初始化按鈕狀態
+updatePromptButtonsState(lastPromptType);
 // Load saved values from localStorage
 const savedApiKey = localStorage.getItem('gemini_api_key');
 const savedVoice = localStorage.getItem('gemini_voice');
