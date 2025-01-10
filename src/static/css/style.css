@@ -401,12 +401,33 @@ button:disabled {
 .api-key-input {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 16px;
     background: var(--background-color);
-    padding: 16px;
+    padding: 20px;
     border-radius: 12px;
     margin: 0 auto;
     max-width: 600px;
+    box-shadow: var(--shadow-1);
+}
+
+.api-key-input label {
+    display: none;
+}
+
+#api-key {
+    flex: 1;
+    height: 48px;
+    font-size: 16px;
+    padding: 0 16px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--surface-color);
+    transition: var(--transition);
+}
+
+#api-key:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(26,115,232,0.2);
 }
 
 .api-key-input label {
@@ -440,22 +461,33 @@ button:disabled {
 }
 
 .connect-btn {
-    padding: 12px !important;
-    width: 48px !important;
+    padding: 12px 24px !important;
     height: 48px !important;
-    border-radius: 50% !important;
-    background: var(--surface-color) !important;
-    color: var(--text-secondary) !important;
+    border-radius: 8px !important;
+    background: var(--primary-color) !important;
+    color: white !important;
+    font-size: 16px !important;
+    font-weight: 500 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     transition: var(--transition) !important;
+    min-width: 120px !important;
 }
 
 .connect-btn:hover {
-    background: var(--primary-color) !important;
-    color: white !important;
+    background: var(--primary-hover) !important;
     transform: translateY(-2px) !important;
+}
+
+.connect-btn.connected {
+    background: var(--success-color) !important;
+}
+
+.connect-btn:disabled {
+    background: var(--border-color) !important;
+    cursor: not-allowed !important;
+    transform: none !important;
 }
 
 /* Adjust logs container position */
