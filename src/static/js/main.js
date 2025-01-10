@@ -534,9 +534,33 @@ client.on('message', (message) => {
 });
 
 sendButton.addEventListener('click', handleSendMessage);
-messageInput.addEventListener('keypress', (event) => {
+// 自動調整文本框高度的函數
+function adjustTextareaHeight(textarea) {
+    textarea.style.height = 'auto';
+    textarea.style.height = Math.min(textarea.scrollHeight, 150) + 'px';
+}
+
+messageInput.addEventListener('input', () => {
+    adjustTextareaHeight(messageInput);
+});
+
+messageInput.addEventListener('keydown', (event) => {
     if (event.key === 'Enter') {
-        handleSendMessage();
+        if (event.shiftKey) {
+            // Shift+Enter 換行
+            event.preventDefault();
+            const start = messageInput.selectionStart;
+            const end = messageInput.selectionEnd;
+            const value = messageInput.value;
+            messageInput.value = value.substring(0, start) + '\n' + value.substring(end);
+            messageInput.selectionStart = messageInput.selectionEnd = start + 1;
+            adjustTextareaHeight(messageInput);
+        } else {
+            // 一般 Enter 發送消息
+            event.preventDefault();
+            handleSendMessage();
+            messageInput.style.height = '48px'; // 重置高度
+        }
     }
 });
 

@@ -1,5 +1,3 @@
-import { serve } from "https://deno.land/std/http/server.ts";
-
 const MIME_TYPES: Record<string, string> = {
   '.html': 'text/html',
   '.js': 'application/javascript',
@@ -47,29 +45,6 @@ async function handleWebSocket(req: Request): Promise<Response> {
     console.log('Gemini message received');
     if (clientWs.readyState === WebSocket.OPEN) {
       clientWs.send(event.data);
-    }
-  };
-
-  // 處理客戶端的ping消息
-  clientWs.onmessage = (event) => {
-    console.log('Client message received');
-    try {
-      const data = JSON.parse(event.data);
-      if (data.type === 'ping') {
-        console.log('Received ping, sending pong');
-        if (clientWs.readyState === WebSocket.OPEN) {
-          clientWs.send(JSON.stringify({ type: 'pong' }));
-        }
-        return;
-      }
-    } catch (e) {
-      // 如果不是JSON或沒有type字段，按正常消息處理
-    }
-    
-    if (targetWs.readyState === WebSocket.OPEN) {
-      targetWs.send(event.data);
-    } else {
-      pendingMessages.push(event.data);
     }
   };
 

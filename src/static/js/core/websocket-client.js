@@ -26,65 +26,6 @@ export class MultimodalLiveClient extends EventEmitter {
         this.config = null;
         this.send = this.send.bind(this);
         this.toolManager = new ToolManager();
-        
-        // 心跳相關配置
-        this.heartbeatInterval = 30000; // 30秒發送一次心跳
-        this.heartbeatTimer = null;
-        this.reconnectAttempts = 0;
-        this.maxReconnectAttempts = 5;
-        this.reconnectDelay = 3000; // 初始重連延遲3秒
-        this.apiKey = null; // 存儲API key用於重連
-    }
-
-    /**
-     * 發送心跳
-     * @private
-     */
-    _startHeartbeat() {
-        this.heartbeatTimer = setInterval(() => {
-            if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-                this._sendDirect({ type: 'ping' });
-                Logger.debug('Sent heartbeat ping');
-            }
-        }, this.heartbeatInterval);
-    }
-
-    /**
-     * 停止心跳
-     * @private
-     */
-    _stopHeartbeat() {
-        if (this.heartbeatTimer) {
-            clearInterval(this.heartbeatTimer);
-            this.heartbeatTimer = null;
-        }
-    }
-
-    /**
-     * 嘗試重新連接
-     * @private
-     */
-    async _attemptReconnect() {
-        if (this.reconnectAttempts >= this.maxReconnectAttempts) {
-            Logger.error('Max reconnection attempts reached');
-            this.emit('error', new Error('Failed to reconnect after maximum attempts'));
-            return;
-        }
-
-        this.reconnectAttempts++;
-        const delay = this.reconnectDelay * Math.pow(2, this.reconnectAttempts - 1);
-        Logger.debug(`Attempting to reconnect in ${delay}ms (attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
-
-        await new Promise(resolve => setTimeout(resolve, delay));
-
-        try {
-            await this.connect(this.config, this.apiKey);
-            this.reconnectAttempts = 0;
-            Logger.debug('Reconnection successful');
-        } catch (error) {
-            Logger.error('Reconnection failed:', error);
-            this._attemptReconnect();
-        }
     }
 
     /**
@@ -129,16 +70,7 @@ export class MultimodalLiveClient extends EventEmitter {
             if (evt.data instanceof Blob) {
                 this.receive(evt.data);
             } else {
-                // 處理心跳回應
-                try {
-                    const data = JSON.parse(evt.data);
-                    if (data.type === 'pong') {
-                        Logger.debug('Received heartbeat pong');
-                        return;
-                    }
-                } catch (e) {
-                    console.log('Non-blob message', evt);
-                }
+                console.log('Non-blob message', evt);
             }
         });
 
@@ -171,7 +103,6 @@ export class MultimodalLiveClient extends EventEmitter {
 
                 ws.removeEventListener('error', onError);
                 ws.addEventListener('close', (ev) => {
-                    this._stopHeartbeat();
                     this.disconnect(ws);
                     let reason = ev.reason || '';
                     if (reason.toLowerCase().includes('error')) {
@@ -183,16 +114,7 @@ export class MultimodalLiveClient extends EventEmitter {
                     }
                     this.log(`server.${ev.type}`, `Disconnected ${reason ? `with reason: ${reason}` : ''}`);
                     this.emit('close', { code: ev.code, reason });
-
-                    // 如果不是正常關閉的連接，嘗試重新連接
-                    if (ev.code !== 1000 && ev.code !== 1001) {
-                        Logger.debug('Abnormal closure, attempting to reconnect...');
-                        this._attemptReconnect();
-                    }
                 });
-
-                // 開始心跳檢測
-                this._startHeartbeat();
                 resolve(true);
             });
         });
