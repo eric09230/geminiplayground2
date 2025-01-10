@@ -134,9 +134,8 @@ const savedFPS = localStorage.getItem('video_fps');
 const savedSystemInstruction = localStorage.getItem('system_instruction');
 const savedShowSystemMessages = localStorage.getItem('show_system_messages');
 
-if (savedShowSystemMessages !== null) {
-    showSystemMessages.checked = savedShowSystemMessages === 'true';
-}
+// 如果沒有保存的設置，默認為 false（不顯示系統訊息）
+showSystemMessages.checked = savedShowSystemMessages === 'true' || false;
 if (savedApiKey) {
     apiKeyInput.value = savedApiKey;
 }
