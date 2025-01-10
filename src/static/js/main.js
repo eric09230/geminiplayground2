@@ -265,6 +265,8 @@ async function resumeAudioContext() {
  * Connects to the WebSocket server.
  * @returns {Promise<void>}
  */
+const header = document.querySelector('.header');
+
 async function connectToWebsocket() {
     if (!apiKeyInput.value) {
         logMessage('Please input API Key', 'system');
@@ -307,6 +309,7 @@ async function connectToWebsocket() {
         micButton.disabled = false;
         cameraButton.disabled = false;
         screenButton.disabled = false;
+        header.classList.add('hidden');
         logMessage('Connected to Gemini 2.0 Flash Multimodal Live API', 'system');
     } catch (error) {
         const errorMessage = error.message || 'Unknown error';
@@ -345,6 +348,7 @@ function disconnectFromWebsocket() {
     micButton.disabled = true;
     cameraButton.disabled = true;
     screenButton.disabled = true;
+    header.classList.remove('hidden');
     logMessage('Disconnected from server', 'system');
     
     if (videoManager) {

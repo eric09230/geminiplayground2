@@ -16,10 +16,6 @@
 <body>
     <div class="modal-backdrop"></div>
     <div id="app">
-        <div class="settings">
-            <input type="password" id="api-key" placeholder="Please Input Gemini API Key" />
-            <button id="config-toggle" class="material-symbols-outlined">settings</button>
-        </div>
         <div id="config-container" class="hidden-mobile">
             <div class="config-wrapper">
                 <div class="setting-container">
@@ -52,14 +48,25 @@
                 <button id="apply-config">Confirm</button>
             </div>
         </div>
-        <button id="connect-button">Connect</button>
         <div id="logs-container"></div>
-        <div class="input-container">
-            <input type="text" id="message-input" placeholder="Enter message...">
-            <div class="control-buttons">
+        <div class="audio-visualizers">
+            <div class="visualizer-container">
+                <label>Input Audio</label>
+                <div id="input-audio-visualizer"></div>
+            </div>
+            <div class="visualizer-container">
+                <label>Output Audio</label>
+                <div id="audio-visualizer"></div>
+            </div>
+        </div>
+        <div class="chat-controls">
+            <div class="input-container">
+                <input type="text" id="message-input" placeholder="Enter message...">
                 <button id="send-button">
                     <span class="material-symbols-outlined">send</span>
                 </button>
+            </div>
+            <div class="media-buttons">
                 <button id="mic-button">
                     <span id="mic-icon" class="material-symbols-outlined">mic</span>
                 </button>
@@ -71,14 +78,13 @@
                 </button>
             </div>
         </div>
-        <div class="audio-visualizers">
-            <div class="visualizer-container">
-                <label>Input Audio</label>
-                <div id="input-audio-visualizer"></div>
+        <div class="header">
+            <div class="api-input-container">
+                <input type="password" id="api-key" placeholder="Please Input Gemini API Key" />
             </div>
-            <div class="visualizer-container">
-                <label>Output Audio</label>
-                <div id="audio-visualizer"></div>
+            <div class="header-buttons">
+                <button id="connect-button">Connect</button>
+                <button id="config-toggle" class="material-symbols-outlined">settings</button>
             </div>
         </div>
         <div id="video-container" style="display: none;">
