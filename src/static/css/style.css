@@ -373,6 +373,20 @@ button:disabled {
     overflow: hidden;
 }
 
+/* Header and API Input */
+.header {
+    background: var(--surface-color);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: var(--shadow-1);
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.header.hidden {
+    display: none;
+}
+
 /* API Input Container */
 .api-input-container {
     margin-top: auto;
