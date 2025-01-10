@@ -78,19 +78,11 @@ translateInstructionButton.addEventListener('click', () => {
 
 // Custom instruction button handler - 設置自定義prompt
 customInstructionButton.addEventListener('click', () => {
-    const savedCustomPrompt = localStorage.getItem('custom_prompt');
-    if (savedCustomPrompt) {
-        systemInstructionInput.value = savedCustomPrompt;
+    const customPrompt = prompt('請輸入您的自定義prompt：');
+    if (customPrompt) {
+        systemInstructionInput.value = customPrompt;
         localStorage.setItem('current_prompt_type', 'custom');
         updatePromptButtonsState('custom');
-    } else {
-        const customPrompt = prompt('請輸入您的自定義prompt：');
-        if (customPrompt) {
-            systemInstructionInput.value = customPrompt;
-            localStorage.setItem('custom_prompt', customPrompt);
-            localStorage.setItem('current_prompt_type', 'custom');
-            updatePromptButtonsState('custom');
-        }
     }
 });
 
@@ -101,13 +93,10 @@ switch (lastPromptType) {
         systemInstructionInput.value = TRANSLATE_INSTRUCTION;
         break;
     case 'custom':
-        const savedCustomPrompt = localStorage.getItem('custom_prompt');
-        if (savedCustomPrompt) {
-            systemInstructionInput.value = savedCustomPrompt;
-        } else {
-            systemInstructionInput.value = DEFAULT_INSTRUCTION;
-            lastPromptType = 'default';
-        }
+        // 如果上次是自定義prompt，直接重置為默認值
+        systemInstructionInput.value = DEFAULT_INSTRUCTION;
+        localStorage.setItem('current_prompt_type', 'default');
+        lastPromptType = 'default';
         break;
     default:
         systemInstructionInput.value = DEFAULT_INSTRUCTION;
