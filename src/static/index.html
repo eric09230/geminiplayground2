@@ -19,6 +19,10 @@
         <div id="config-container" class="hidden-mobile">
             <div class="config-wrapper">
                 <div class="setting-container">
+                    <span class="setting-label">API Key: </span>
+                    <input type="password" id="api-key" class="settings-input" placeholder="Please Input Gemini API Key" />
+                </div>
+                <div class="setting-container">
                     <span class="setting-label">Sound: </span>
                     <select id="voice-select">
                         <option value="Puck">Puck (Male)</option>
@@ -85,10 +89,6 @@
                     <span class="material-symbols-outlined">cloud_sync</span>
                 </button>
                 <button id="config-toggle" class="material-symbols-outlined">settings</button>
-            </div>
-            <div class="api-input-container hidden">
-                <input type="password" id="api-key" placeholder="Please Input Gemini API Key" />
-                <button id="api-confirm" class="material-symbols-outlined">check</button>
             </div>
         </div>
         <div id="video-container" style="display: none;">

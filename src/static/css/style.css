@@ -140,9 +140,22 @@ body {
     flex-shrink: 0;
 }
 
+.settings-input,
 select {
     flex: 1;
     min-width: 200px;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    transition: var(--transition);
+}
+
+.settings-input:focus,
+select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(26,115,232,0.2);
 }
 
 input[type="number"] {
