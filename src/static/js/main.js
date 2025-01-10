@@ -534,24 +534,40 @@ cameraButton.disabled = true;
 async function handleScreenShare() {
     if (!isScreenSharing) {
         try {
-            screenContainer.style.display = 'block';
+            // 檢查瀏覽器支援類型
+            const supportType = await ScreenRecorder.checkBrowserSupport();
             
-            screenRecorder = new ScreenRecorder();
-            await screenRecorder.start(screenPreview, (frameData) => {
-                if (isConnected) {
-                    client.sendRealtimeInput([{
-                        mimeType: "image/jpeg",
-                        data: frameData
-                    }]);
-                }
-            });
+            if (supportType === 'SCREEN_SHARE') {
+                // 桌面版瀏覽器的原始螢幕分享功能
+                screenContainer.style.display = 'block';
+                screenRecorder = new ScreenRecorder();
+                await screenRecorder.start(screenPreview, (frameData) => {
+                    if (isConnected) {
+                        client.sendRealtimeInput([{
+                            mimeType: "image/jpeg",
+                            data: frameData
+                        }]);
+                    }
+                });
 
-            isScreenSharing = true;
-            screenIcon.textContent = 'stop_screen_share';
-            screenButton.classList.add('active');
-            Logger.info('Screen sharing started');
-            logMessage('Screen sharing started', 'system');
-
+                isScreenSharing = true;
+                screenIcon.textContent = 'stop_screen_share';
+                screenButton.classList.add('active');
+                Logger.info('Screen sharing started');
+                logMessage('Screen sharing started', 'system');
+            } else {
+                // Android 設備的替代方案
+                screenRecorder = new ScreenRecorder();
+                await screenRecorder.handleAndroidShare((frameData) => {
+                    if (isConnected) {
+                        client.sendRealtimeInput([{
+                            mimeType: "image/jpeg",
+                            data: frameData
+                        }]);
+                        logMessage('圖片已成功分享', 'system');
+                    }
+                });
+            }
         } catch (error) {
             Logger.error('Screen sharing error:', error);
             logMessage(`Error: ${error.message}`, 'system');

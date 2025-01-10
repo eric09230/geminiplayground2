@@ -207,13 +207,93 @@ export class ScreenRecorder {
      * @throws {ApplicationError} Throws an error if screen sharing is not supported.
      * @static
      */
-    static checkBrowserSupport() {
+    static async checkBrowserSupport() {
+        const isAndroid = /Android/i.test(navigator.userAgent);
+        
+        if (isAndroid) {
+            // 檢查是否支援檔案分享 API
+            if (navigator.share && navigator.canShare) {
+                return 'SHARE_API';
+            }
+            
+            // 檢查是否支援檔案選擇
+            if (window.showOpenFilePicker) {
+                return 'FILE_PICKER';
+            }
+            
+            throw new ApplicationError(
+                '很抱歉，您的設備不支援任何分享功能。請嘗試更新瀏覽器或使用桌面版瀏覽器。',
+                ErrorCodes.SCREEN_NOT_SUPPORTED
+            );
+        }
+
         if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
             throw new ApplicationError(
                 'Screen sharing is not supported in this browser',
                 ErrorCodes.SCREEN_NOT_SUPPORTED
             );
         }
-        return true;
+
+        return 'SCREEN_SHARE';
+    }
+
+    /**
+     * 處理 Android 的替代分享方案
+     * @param {Function} onScreenData - 接收圖片數據的回調函數
+     * @returns {Promise<void>}
+     */
+    async handleAndroidShare(onScreenData) {
+        const supportType = await ScreenRecorder.checkBrowserSupport();
+        
+        if (supportType === 'SHARE_API') {
+            // 使用 Web Share API
+            try {
+                const shareData = {
+                    title: '分享螢幕截圖',
+                    text: '請選擇要分享的螢幕截圖',
+                    files: []
+                };
+                
+                if (navigator.canShare(shareData)) {
+                    await navigator.share(shareData);
+                }
+            } catch (error) {
+                throw new ApplicationError(
+                    '分享失敗，請重試',
+                    ErrorCodes.SHARE_FAILED,
+                    { originalError: error }
+                );
+            }
+        } else if (supportType === 'FILE_PICKER') {
+            // 使用檔案選擇器
+            try {
+                const [handle] = await window.showOpenFilePicker({
+                    types: [{
+                        description: '圖片檔案',
+                        accept: {
+                            'image/*': ['.png', '.jpg', '.jpeg']
+                        }
+                    }]
+                });
+                
+                const file = await handle.getFile();
+                const reader = new FileReader();
+                
+                reader.onload = (e) => {
+                    const base64Data = e.target.result.split(',')[1];
+                    if (this.validateFrame(base64Data)) {
+                        onScreenData(base64Data);
+                    }
+                };
+                
+                reader.readAsDataURL(file);
+            } catch (error) {
+                throw new ApplicationError(
+                    '檔案選擇失敗，請重試',
+                    ErrorCodes.FILE_PICK_FAILED,
+                    { originalError: error }
+                );
+            }
+        }
     }
 } 
