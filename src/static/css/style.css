@@ -144,6 +144,40 @@ input[type="number"] {
     width: 80px;
 }
 
+#reset-instruction {
+    padding: 8px;
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    color: var(--text-secondary);
+}
+
+#reset-instruction:hover {
+    background: rgba(95,99,104,0.1);
+    color: var(--primary-color);
+}
+
+#system-instruction {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 14px;
+    resize: vertical;
+    outline: none;
+    transition: var(--transition);
+}
+
+#system-instruction:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(26,115,232,0.2);
+}
+
 /* Buttons */
 button {
     padding: 12px 24px;

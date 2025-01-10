@@ -36,7 +36,14 @@ const configContainer = document.getElementById('config-container');
 const systemInstructionInput = document.getElementById('system-instruction');
 systemInstructionInput.value = CONFIG.SYSTEM_INSTRUCTION.TEXT;
 const applyConfigButton = document.getElementById('apply-config');
+const resetInstructionButton = document.getElementById('reset-instruction');
 const responseTypeSelect = document.getElementById('response-type-select');
+
+// Reset instruction button handler
+resetInstructionButton.addEventListener('click', () => {
+    systemInstructionInput.value = CONFIG.SYSTEM_INSTRUCTION.TEXT;
+    localStorage.removeItem('system_instruction'); // 清除本地存儲的自定義指令
+});
 // Load saved values from localStorage
 const savedApiKey = localStorage.getItem('gemini_api_key');
 const savedVoice = localStorage.getItem('gemini_voice');
