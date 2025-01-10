@@ -1,0 +1,28 @@
+{
+  "project": "gemini-playground",
+  "entrypoint": "deno_index.ts",
+  "include": [
+    "static/**/*",
+    "api_proxy/**/*",
+    "deno_index.ts",
+    "importMap.json",
+    "deno.json"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ],
+  "static": {
+    "path": "static",
+    "include": [
+      "**/*"
+    ]
+  },
+  "env": {
+    "DENO_ENV": "production"
+  },
+  "imports": {
+    "map": "./importMap.json"
+  }
+}
