@@ -474,8 +474,8 @@ button:not(:disabled):active {
     }
 
     #app {
-        padding: 10px;
-        gap: 8px;
+        padding: 6px;
+        gap: 4px;
         height: 100vh;
         height: -webkit-fill-available;
         display: flex;
@@ -485,55 +485,81 @@ button:not(:disabled):active {
     #logs-container {
         flex: 1;
         min-height: 0;
-        max-height: calc(100vh - 200px);
+        max-height: calc(100vh - 280px);
         overflow-y: auto;
-        margin-bottom: 8px;
+        margin-bottom: 4px;
+        padding: 12px;
+    }
+
+    .log-entry {
+        padding: 6px 8px;
+        margin-bottom: 4px;
+        font-size: 14px;
     }
 
     .audio-visualizers {
         flex-direction: row;
-        gap: 8px;
-        margin: 8px 0;
+        gap: 4px;
+        margin: 4px 0;
+        max-height: 40px;
     }
 
     .visualizer-container {
         flex: 1;
         min-width: 0;
-        padding: 6px 8px;
+        padding: 4px 6px;
     }
 
     .visualizer-container label {
-        font-size: 11px;
+        font-size: 10px;
         white-space: nowrap;
         margin-bottom: 2px;
     }
 
     .chat-controls {
-        position: sticky;
+        position: fixed;
         bottom: 0;
+        left: 0;
+        right: 0;
         background: var(--background-color);
-        padding: 8px 0;
+        padding: 8px 6px;
         margin: 0;
         z-index: 100;
+        box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
     }
 
     .input-container {
         flex-direction: row;
         align-items: flex-end;
+        gap: 4px;
     }
 
     #message-input {
         flex: 1;
-        max-height: 120px;
+        max-height: 100px;
+        padding: 8px 12px;
+        font-size: 14px;
     }
 
     .media-buttons {
         justify-content: space-evenly;
+        gap: 4px;
+        margin-top: 4px;
+    }
+
+    #send-button,
+    #mic-button,
+    #camera-button,
+    #screen-button {
+        width: 40px;
+        height: 40px;
+        padding: 0;
     }
 
     .header {
-        padding: 12px;
-        margin-top: 8px;
+        padding: 8px;
+        margin-top: 4px;
+        margin-bottom: 60px;
     }
 
     .header-buttons {
@@ -541,16 +567,30 @@ button:not(:disabled):active {
     }
 
     #api-key {
-        margin-bottom: 8px;
+        margin-bottom: 6px;
+        padding: 8px 12px;
+        font-size: 14px;
     }
 
     .video-controls {
         flex-wrap: wrap;
         justify-content: center;
+        gap: 4px;
     }
 
     #config-container {
         width: 95vw;
-        max-height: 80vh;
+        max-height: 75vh;
+        padding: 16px;
+    }
+
+    .setting-container {
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+
+    .setting-label {
+        min-width: 140px;
+        font-size: 13px;
     }
 }
