@@ -16,8 +16,12 @@
 <body>
     <div class="modal-backdrop"></div>
     <div id="app">
-        <div class="header">
-            <input type="text" id="api-key" placeholder="請輸入您的 Gemini API Key" />
+        <div class="header" style="display: block;">
+            <h2 style="margin-bottom: 15px;">Gemini 2.0 Flash Multimodal Live API Client</h2>
+            <div class="api-input-wrapper">
+                <input type="text" id="api-key" placeholder="請輸入您的 Gemini API Key" style="width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid var(--border-color); border-radius: 8px;" />
+                <p style="color: var(--text-secondary); font-size: 14px; margin-top: 5px;">請先輸入 API Key 後點擊連接按鈕</p>
+            </div>
         </div>
         <div id="config-container" class="hidden-mobile">
             <div class="config-wrapper">
