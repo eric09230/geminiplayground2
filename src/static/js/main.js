@@ -1,4 +1,4 @@
-    import { MultimodalLiveClient } from './core/websocket-client.js';
+import { MultimodalLiveClient } from './core/websocket-client.js';
 import { AudioStreamer } from './audio/audio-streamer.js';
 import { AudioRecorder } from './audio/audio-recorder.js';
 import { CONFIG } from './config/config.js';
@@ -159,10 +159,7 @@ configToggle.addEventListener('click', () => {
     modalBackdrop.classList.toggle('active');
 });
 
-applyConfigButton.addEventListener('click', async () => {
-    if (!isConnected) {
-        await connectToWebsocket();
-    }
+applyConfigButton.addEventListener('click', () => {
     configContainer.classList.toggle('active');
     configToggle.classList.toggle('active');
     modalBackdrop.classList.toggle('active');
@@ -195,45 +192,6 @@ const client = new MultimodalLiveClient();
  * @param {string} message - The message to log.
  * @param {string} [type='system'] - The type of the message (system, user, ai).
  */
-// 處理虛擬鍵盤和視口高度
-function handleVisualViewport() {
-    const viewport = window.visualViewport;
-    if (!viewport) return;
-
-    function onViewportChange() {
-        // 設置視口高度CSS變量
-        const vh = viewport.height * 0.01;
-        document.documentElement.style.setProperty('--vh', `${vh}px`);
-
-        // 調整聊天容器的滾動位置
-        const logsContainer = document.getElementById('logs-container');
-        if (document.activeElement === messageInput) {
-            // 當鍵盤彈出時，確保輸入框可見
-            setTimeout(() => {
-                const lastMessage = logsContainer.lastElementChild;
-                if (lastMessage) {
-                    lastMessage.scrollIntoView({ behavior: 'smooth', block: 'end' });
-                }
-            }, 100);
-        } else {
-            // 當鍵盤收起時，滾動到最新消息
-            setTimeout(() => {
-                const lastMessage = logsContainer.lastElementChild;
-                if (lastMessage) {
-                    lastMessage.scrollIntoView({ behavior: 'smooth', block: 'end' });
-                }
-            }, 100);
-        }
-    }
-
-    // 監聽視口變化
-    viewport.addEventListener('resize', onViewportChange);
-    viewport.addEventListener('scroll', onViewportChange);
-
-    // 初始化視口高度
-    onViewportChange();
-}
-
 function logMessage(message, type = 'system') {
     // 如果是系統訊息且設定為不顯示，則直接返回
     if (type === 'system' && !showSystemMessages.checked) {
@@ -267,24 +225,9 @@ function logMessage(message, type = 'system') {
     messageText.textContent = message;
     logEntry.appendChild(messageText);
 
-    // 在添加新消息前獲取當前滾動位置
-    const isScrolledToBottom = logsContainer.scrollHeight - logsContainer.clientHeight <= logsContainer.scrollTop + 1;
-
     logsContainer.appendChild(logEntry);
-    
-    // 只有在滾動到底部時才自動滾動
-    if (isScrolledToBottom || type === 'user') {
-        setTimeout(() => {
-            logEntry.scrollIntoView({
-                behavior: 'smooth',
-                block: 'end'
-            });
-        }, 100);
-    }
+    logsContainer.scrollTop = logsContainer.scrollHeight;
 }
-
-// 初始化視口處理
-handleVisualViewport();
 
 // 添加系統訊息顯示設定的變更監聽
 showSystemMessages.addEventListener('change', () => {
@@ -448,46 +391,27 @@ async function connectToWebsocket() {
         await client.connect(config,apiKeyInput.value);
         isConnected = true;
         await resumeAudioContext();
-        const connectIcon = connectButton.querySelector('.material-symbols-outlined');
-        if (connectIcon) {
-            connectIcon.textContent = 'cloud_done';
-            connectButton.classList.add('connected');
-            messageInput.disabled = false;
-            sendButton.disabled = false;
-            micButton.disabled = false;
-            cameraButton.disabled = false;
-            screenButton.disabled = false;
-            header.classList.add('hidden');
-            logMessage('Connected to Gemini 2.0 Flash Multimodal Live API', 'system');
-        } else {
-            throw new Error('Connect button icon not found');
-        }
+        connectButton.textContent = 'Disconnect';
+        connectButton.classList.add('connected');
+        messageInput.disabled = false;
+        sendButton.disabled = false;
+        micButton.disabled = false;
+        cameraButton.disabled = false;
+        screenButton.disabled = false;
+        header.classList.add('hidden');
+        logMessage('Connected to Gemini 2.0 Flash Multimodal Live API', 'system');
     } catch (error) {
         const errorMessage = error.message || 'Unknown error';
         Logger.error('Connection error:', error);
         logMessage(`Connection error: ${errorMessage}`, 'system');
         isConnected = false;
-        
-        // 重置連接按鈕狀態
-        const connectIcon = connectButton.querySelector('.material-symbols-outlined');
-        if (connectIcon) {
-            connectIcon.textContent = 'cloud_off';
-        } else {
-            // 如果圖標不存在，重新創建
-            const newConnectIcon = document.createElement('span');
-            newConnectIcon.className = 'material-symbols-outlined';
-            newConnectIcon.textContent = 'cloud_off';
-            connectButton.innerHTML = '';
-            connectButton.appendChild(newConnectIcon);
-        }
-        
+        connectButton.textContent = 'Connect';
         connectButton.classList.remove('connected');
         messageInput.disabled = true;
         sendButton.disabled = true;
         micButton.disabled = true;
         cameraButton.disabled = true;
         screenButton.disabled = true;
-        header.classList.remove('hidden');
     }
 }
 
@@ -506,28 +430,13 @@ function disconnectFromWebsocket() {
         isRecording = false;
         updateMicIcon();
     }
-    // 重置連接按鈕狀態
-    const connectIcon = connectButton.querySelector('.material-symbols-outlined');
-    if (connectIcon) {
-        connectIcon.textContent = 'cloud_off';
-    } else {
-        // 如果圖標不存在，重新創建
-        const newConnectIcon = document.createElement('span');
-        newConnectIcon.className = 'material-symbols-outlined';
-        newConnectIcon.textContent = 'cloud_off';
-        connectButton.innerHTML = '';
-        connectButton.appendChild(newConnectIcon);
-    }
-
-    // 重置所有按鈕狀態
+    connectButton.textContent = 'Connect';
     connectButton.classList.remove('connected');
     messageInput.disabled = true;
     sendButton.disabled = true;
     micButton.disabled = true;
     cameraButton.disabled = true;
     screenButton.disabled = true;
-    
-    // 顯示header並記錄日誌
     header.classList.remove('hidden');
     logMessage('Disconnected from server', 'system');
     
@@ -549,54 +458,8 @@ function handleSendMessage() {
         logMessage(message, 'user');
         client.send({ text: message });
         messageInput.value = '';
-        // 重置輸入框高度
-        messageInput.style.height = '48px';
-        
-        // 在移動端，發送後將焦點從輸入框移除，收起虛擬鍵盤
-        if (window.innerWidth <= 768) {
-            messageInput.blur();
-            // 確保消息顯示在可見區域
-            setTimeout(() => {
-                const lastMessage = logsContainer.lastElementChild;
-                if (lastMessage) {
-                    lastMessage.scrollIntoView({ behavior: 'smooth', block: 'end' });
-                }
-            }, 150);
-        }
     }
 }
-
-// 處理輸入框焦點和大小調整
-let resizeTimeout;
-messageInput.addEventListener('focus', () => {
-    if (window.innerWidth <= 768) {
-        // 在移動端，輸入框獲得焦點時，等待虛擬鍵盤彈出後調整視圖
-        setTimeout(() => {
-            const lastMessage = logsContainer.lastElementChild;
-            if (lastMessage) {
-                lastMessage.scrollIntoView({ behavior: 'smooth', block: 'end' });
-            }
-        }, 300);
-    }
-});
-
-// 優化輸入框大小調整
-function adjustTextareaHeight() {
-    messageInput.style.height = '48px';
-    const newHeight = Math.min(messageInput.scrollHeight, 150);
-    messageInput.style.height = newHeight + 'px';
-    
-    // 調整後確保最新消息可見
-    clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(() => {
-        const lastMessage = logsContainer.lastElementChild;
-        if (lastMessage) {
-            lastMessage.scrollIntoView({ behavior: 'smooth', block: 'end' });
-        }
-    }, 100);
-}
-
-messageInput.addEventListener('input', adjustTextareaHeight);
 
 // Event Listeners
 client.on('open', () => {
@@ -671,33 +534,9 @@ client.on('message', (message) => {
 });
 
 sendButton.addEventListener('click', handleSendMessage);
-// 自動調整文本框高度的函數
-function adjustTextareaHeight(textarea) {
-    textarea.style.height = 'auto';
-    textarea.style.height = Math.min(textarea.scrollHeight, 150) + 'px';
-}
-
-messageInput.addEventListener('input', () => {
-    adjustTextareaHeight(messageInput);
-});
-
-messageInput.addEventListener('keydown', (event) => {
+messageInput.addEventListener('keypress', (event) => {
     if (event.key === 'Enter') {
-        if (event.shiftKey) {
-            // Shift+Enter 換行
-            event.preventDefault();
-            const start = messageInput.selectionStart;
-            const end = messageInput.selectionEnd;
-            const value = messageInput.value;
-            messageInput.value = value.substring(0, start) + '\n' + value.substring(end);
-            messageInput.selectionStart = messageInput.selectionEnd = start + 1;
-            adjustTextareaHeight(messageInput);
-        } else {
-            // 一般 Enter 發送消息
-            event.preventDefault();
-            handleSendMessage();
-            messageInput.style.height = '48px'; // 重置高度
-        }
+        handleSendMessage();
     }
 });
 
@@ -711,19 +550,10 @@ connectButton.addEventListener('click', () => {
     }
 });
 
-// 初始化按鈕狀態
 messageInput.disabled = true;
 sendButton.disabled = true;
 micButton.disabled = true;
-cameraButton.disabled = true;
-screenButton.disabled = true;
-
-// 初始化connect按鈕
-const connectIcon = document.createElement('span');
-connectIcon.className = 'material-symbols-outlined';
-connectIcon.textContent = 'cloud_off';
-connectButton.innerHTML = '';
-connectButton.appendChild(connectIcon);
+connectButton.textContent = 'Connect';
 
 /**
  * Handles the video toggle. Starts or stops video streaming.

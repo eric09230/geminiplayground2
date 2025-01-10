@@ -11,8 +11,6 @@
     --shadow-1: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
     --shadow-2: 0 2px 6px 2px rgba(60,64,67,0.15);
     --transition: all 0.2s ease;
-    --header-height: 60px;
-    --footer-height: 140px;
 }
 
 * {
@@ -26,8 +24,6 @@ body {
     background-color: var(--background-color);
     color: var(--text-primary);
     line-height: 1.5;
-    height: 100vh;
-    overflow: hidden;
 }
 
 #app {
@@ -36,21 +32,25 @@ body {
     padding: 20px;
     display: flex;
     flex-direction: column;
-    height: 100vh;
-    position: relative;
+    gap: 12px;
+    min-height: 100vh;
 }
 
 /* Logs Container */
 #logs-container {
-    flex: 1;
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 40px);
+    max-width: 1160px;
+    height: calc(100vh - 200px);
     background: var(--surface-color);
     border-radius: 12px;
     padding: 20px;
-    margin-bottom: 20px;
     overflow-y: auto;
     box-shadow: var(--shadow-1);
-    height: calc(100vh - var(--header-height) - var(--footer-height));
-    min-height: 200px;
+    z-index: 1;
 }
 
 /* Header */
@@ -59,10 +59,10 @@ body {
     padding: 16px;
     border-radius: 12px;
     box-shadow: var(--shadow-1);
-    height: var(--header-height);
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
 .api-input-container {
@@ -236,10 +236,6 @@ button:disabled {
     display: flex;
     align-items: center;
     justify-content: center;
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 101;
 }
 
 #config-toggle:hover {
@@ -253,6 +249,12 @@ button:disabled {
 
 /* Chat Controls */
 .chat-controls {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 40px);
+    max-width: 1160px;
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -260,10 +262,7 @@ button:disabled {
     padding: 20px;
     border-radius: 12px;
     box-shadow: var(--shadow-1);
-    position: sticky;
-    bottom: 0;
-    z-index: 100;
-    height: var(--footer-height);
+    z-index: 2;
 }
 
 .input-container {
@@ -280,8 +279,6 @@ button:disabled {
     font-size: 16px;
     outline: none;
     transition: var(--transition);
-    resize: none;
-    max-height: 150px;
 }
 
 #message-input:focus {
@@ -306,6 +303,16 @@ button:disabled {
     height: 48px;
     padding: 0;
     border-radius: 50%;
+}
+
+/* Logs Container */
+#logs-container {
+    background: var(--surface-color);
+    border-radius: 12px;
+    padding: 20px;
+    height: 400px;
+    overflow-y: auto;
+    box-shadow: var(--shadow-1);
 }
 
 .log-entry {
@@ -369,6 +376,15 @@ button:disabled {
     background: rgba(95,99,104,0.1);
     border-radius: 6px;
     overflow: hidden;
+}
+
+/* API Input Container */
+.api-input-container {
+    margin-top: auto;
+    padding: 16px;
+    background: var(--surface-color);
+    border-radius: 12px;
+    box-shadow: var(--shadow-1);
 }
 
 .audio-bar {
@@ -466,30 +482,76 @@ button:not(:disabled):active {
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    :root {
-        --header-height: 50px;
-        --footer-height: 120px;
-    }
-
-    body {
-        height: 100vh;
-        height: calc(var(--vh, 1vh) * 100);
-    }
-
     #app {
         padding: 10px;
-        gap: 8px;
-        height: 100%;
     }
 
     #logs-container {
-        height: calc(100vh - var(--header-height) - var(--footer-height));
-        min-height: 150px;
-        margin-bottom: 10px;
+        top: 10px;
+        height: calc(100vh - 180px);
+        width: calc(100% - 20px);
+        padding: 15px;
     }
 
     .chat-controls {
-        padding: 10px;
+        bottom: 10px;
+        width: calc(100% - 20px);
+        padding: 15px;
+    }
+
+    .audio-visualizers {
+        position: fixed;
+        bottom: 160px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: calc(100% - 20px);
+        flex-direction: row;
+        gap: 8px;
+        margin: 0;
+        z-index: 2;
+    }
+
+    .visualizer-container {
+        flex: 1;
+        min-width: 0;
+        padding: 6px 8px;
+    }
+
+    .visualizer-container label {
+        font-size: 11px;
+        white-space: nowrap;
+        margin-bottom: 2px;
+    }
+
+    .chat-controls {
+        gap: 6px;
+    }
+
+    .header {
+        padding: 12px;
+        margin-top: 8px;
+    }
+
+    .header-buttons {
+        justify-content: space-between;
+    }
+
+    #api-key {
+        margin-bottom: 8px;
+    }
+
+    .video-controls {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    #config-container {
+        width: 95vw;
+        max-height: 80vh;
+    }
+
+    /* 保持聊天輸入區域在移動端的水平排列 */
+    .chat-controls {
         gap: 8px;
     }
 
@@ -498,49 +560,10 @@ button:not(:disabled):active {
     }
 
     #message-input {
-        font-size: 14px;
-        padding: 8px 12px;
+        flex: 1;
     }
 
     .media-buttons {
         justify-content: space-evenly;
-    }
-
-    #send-button,
-    #mic-button,
-    #camera-button,
-    #screen-button {
-        width: 40px;
-        height: 40px;
-    }
-
-    .header {
-        padding: 12px;
-        height: var(--header-height);
-    }
-
-    #config-toggle {
-        top: 10px;
-        right: 10px;
-    }
-
-    #config-container {
-        width: 95vw;
-        max-height: 80vh;
-        padding: 16px;
-    }
-
-    .setting-container {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .setting-label {
-        min-width: auto;
-    }
-
-    select {
-        width: 100%;
-        min-width: auto;
     }
 }
