@@ -192,6 +192,26 @@ const client = new MultimodalLiveClient();
  * @param {string} message - The message to log.
  * @param {string} [type='system'] - The type of the message (system, user, ai).
  */
+// 處理虛擬鍵盤
+function handleVisualViewport() {
+    const viewport = window.visualViewport;
+    if (!viewport) return;
+
+    function onViewportChange() {
+        const currentHeight = viewport.height;
+        document.body.style.height = `${currentHeight}px`;
+        // 確保對話框在鍵盤彈出時可見
+        if (document.activeElement === messageInput) {
+            setTimeout(() => {
+                messageInput.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+        }
+    }
+
+    viewport.addEventListener('resize', onViewportChange);
+    viewport.addEventListener('scroll', onViewportChange);
+}
+
 function logMessage(message, type = 'system') {
     // 如果是系統訊息且設定為不顯示，則直接返回
     if (type === 'system' && !showSystemMessages.checked) {
@@ -226,8 +246,15 @@ function logMessage(message, type = 'system') {
     logEntry.appendChild(messageText);
 
     logsContainer.appendChild(logEntry);
-    logsContainer.scrollTop = logsContainer.scrollHeight;
+    
+    // 平滑滾動到最新消息
+    setTimeout(() => {
+        logEntry.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }, 100);
 }
+
+// 初始化視口處理
+handleVisualViewport();
 
 // 添加系統訊息顯示設定的變更監聽
 showSystemMessages.addEventListener('change', () => {
@@ -458,8 +485,37 @@ function handleSendMessage() {
         logMessage(message, 'user');
         client.send({ text: message });
         messageInput.value = '';
+        // 重置輸入框高度
+        messageInput.style.height = '48px';
+        // 在移動端，發送後將焦點從輸入框移除，收起虛擬鍵盤
+        if (window.innerWidth <= 768) {
+            messageInput.blur();
+        }
     }
 }
+
+// 處理輸入框焦點
+messageInput.addEventListener('focus', () => {
+    if (window.innerWidth <= 768) {
+        // 在移動端，輸入框獲得焦點時，等待虛擬鍵盤彈出後滾動
+        setTimeout(() => {
+            messageInput.scrollIntoView({ behavior: 'smooth' });
+        }, 300);
+    }
+});
+
+// 防止輸入框在移動端的彈跳效果
+document.documentElement.style.setProperty(
+    '--vh',
+    `${window.innerHeight * 0.01}px`
+);
+
+window.addEventListener('resize', () => {
+    document.documentElement.style.setProperty(
+        '--vh',
+        `${window.innerHeight * 0.01}px`
+    );
+});
 
 // Event Listeners
 client.on('open', () => {

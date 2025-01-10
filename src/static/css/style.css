@@ -467,13 +467,27 @@ button:not(:disabled):active {
 
 /* Responsive Design */
 @media (max-width: 768px) {
+    body {
+        height: 100vh;
+        height: -webkit-fill-available;
+        overflow: hidden;
+    }
+
     #app {
         padding: 10px;
         gap: 8px;
+        height: 100vh;
+        height: -webkit-fill-available;
+        display: flex;
+        flex-direction: column;
     }
 
     #logs-container {
-        min-height: 200px;
+        flex: 1;
+        min-height: 0;
+        max-height: calc(100vh - 200px);
+        overflow-y: auto;
+        margin-bottom: 8px;
     }
 
     .audio-visualizers {
@@ -495,7 +509,26 @@ button:not(:disabled):active {
     }
 
     .chat-controls {
-        gap: 6px;
+        position: sticky;
+        bottom: 0;
+        background: var(--background-color);
+        padding: 8px 0;
+        margin: 0;
+        z-index: 100;
+    }
+
+    .input-container {
+        flex-direction: row;
+        align-items: flex-end;
+    }
+
+    #message-input {
+        flex: 1;
+        max-height: 120px;
+    }
+
+    .media-buttons {
+        justify-content: space-evenly;
     }
 
     .header {
@@ -519,22 +552,5 @@ button:not(:disabled):active {
     #config-container {
         width: 95vw;
         max-height: 80vh;
-    }
-
-    /* 保持聊天輸入區域在移動端的水平排列 */
-    .chat-controls {
-        gap: 8px;
-    }
-
-    .input-container {
-        flex-direction: row;
-    }
-
-    #message-input {
-        flex: 1;
-    }
-
-    .media-buttons {
-        justify-content: space-evenly;
     }
 }
