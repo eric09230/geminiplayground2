@@ -33,7 +33,8 @@ body {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    min-height: 100vh;
+    height: 100vh;
+    overflow: hidden;
 }
 
 /* Logs Container */
@@ -241,17 +242,11 @@ button:disabled {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: calc(100% - 40px);
-    max-width: 1160px;
     background: var(--surface-color);
     padding: 20px;
     border-radius: 12px;
     box-shadow: var(--shadow-1);
-    z-index: 100;
+    margin-top: auto;
 }
 
 .input-container {
@@ -305,15 +300,11 @@ button:disabled {
     background: var(--surface-color);
     border-radius: 12px;
     padding: 20px;
-    height: calc(100vh - 200px);
+    height: calc(100vh - 300px);
     overflow-y: auto;
     box-shadow: var(--shadow-1);
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: calc(100% - 40px);
-    max-width: 1160px;
+    margin: 20px 0;
+    flex: 1;
 }
 
 .log-entry {
