@@ -44,10 +44,12 @@
                     <input type="number" id="fps-input" placeholder="Video FPS" value="1" min="1" max="30" step="1"/>
                     <span class="fps-help">Higher FPS need more network bandwidth</span>
                 </div>
-                <div class="setting-container">
+                <div class="setting-container prompt-buttons">
                     <button id="reset-instruction" class="material-symbols-outlined" title="Reset to default instruction">restart_alt</button>
-                    <textarea id="system-instruction" placeholder="Enter custom system instructions..." rows="6"></textarea>
+                    <button id="translate-instruction" class="material-symbols-outlined" title="Use translation prompt">translate</button>
+                    <button id="custom-instruction" class="material-symbols-outlined" title="Use custom prompt">bookmark</button>
                 </div>
+                <textarea id="system-instruction" placeholder="Enter custom system instructions..." rows="6"></textarea>
                 <button id="apply-config">Confirm</button>
             </div>
         </div>

@@ -144,7 +144,13 @@ input[type="number"] {
     width: 80px;
 }
 
-#reset-instruction {
+.prompt-buttons {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.prompt-buttons button {
     padding: 8px;
     width: 36px;
     height: 36px;
@@ -157,9 +163,14 @@ input[type="number"] {
     color: var(--text-secondary);
 }
 
-#reset-instruction:hover {
+.prompt-buttons button:hover {
     background: rgba(95,99,104,0.1);
     color: var(--primary-color);
+}
+
+.prompt-buttons button.active {
+    color: var(--primary-color);
+    background: rgba(26,115,232,0.1);
 }
 
 #system-instruction {

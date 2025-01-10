@@ -37,12 +37,47 @@ const systemInstructionInput = document.getElementById('system-instruction');
 systemInstructionInput.value = CONFIG.SYSTEM_INSTRUCTION.TEXT;
 const applyConfigButton = document.getElementById('apply-config');
 const resetInstructionButton = document.getElementById('reset-instruction');
+const translateInstructionButton = document.getElementById('translate-instruction');
+const customInstructionButton = document.getElementById('custom-instruction');
 const responseTypeSelect = document.getElementById('response-type-select');
+
+// 翻譯prompt
+const TRANSLATE_INSTRUCTION = `You are a Chinese-English translator. Follow these rules:
+
+1.When you receive Chinese text, translate it to English
+2.When you receive English text, translate it to Traditional Chinese
+3.Only output the translated text without any explanation or additional commentary
+4.For Chinese to English: maintain formal tone unless the source is casual
+5.For English to Chinese: use Traditional Chinese characters (繁體中文)
+6.Preserve the original formatting and punctuation style where appropriate
+7.Keep any proper nouns, brand names, or technical terms in their commonly accepted translations`;
 
 // Reset instruction button handler
 resetInstructionButton.addEventListener('click', () => {
     systemInstructionInput.value = CONFIG.SYSTEM_INSTRUCTION.TEXT;
-    localStorage.removeItem('system_instruction'); // 清除本地存儲的自定義指令
+    localStorage.removeItem('system_instruction');
+});
+
+// Translate instruction button handler
+translateInstructionButton.addEventListener('click', () => {
+    systemInstructionInput.value = TRANSLATE_INSTRUCTION;
+    localStorage.setItem('system_instruction', TRANSLATE_INSTRUCTION);
+});
+
+// Custom instruction button handler
+customInstructionButton.addEventListener('click', () => {
+    const savedCustomPrompt = localStorage.getItem('custom_prompt');
+    if (savedCustomPrompt) {
+        systemInstructionInput.value = savedCustomPrompt;
+        localStorage.setItem('system_instruction', savedCustomPrompt);
+    } else {
+        const customPrompt = prompt('請輸入您的自定義prompt：');
+        if (customPrompt) {
+            systemInstructionInput.value = customPrompt;
+            localStorage.setItem('custom_prompt', customPrompt);
+            localStorage.setItem('system_instruction', customPrompt);
+        }
+    }
 });
 // Load saved values from localStorage
 const savedApiKey = localStorage.getItem('gemini_api_key');
