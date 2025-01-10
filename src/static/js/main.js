@@ -449,27 +449,45 @@ async function connectToWebsocket() {
         isConnected = true;
         await resumeAudioContext();
         const connectIcon = connectButton.querySelector('.material-symbols-outlined');
-        connectIcon.textContent = 'cloud_done';
-        connectButton.classList.add('connected');
-        messageInput.disabled = false;
-        sendButton.disabled = false;
-        micButton.disabled = false;
-        cameraButton.disabled = false;
-        screenButton.disabled = false;
-        header.classList.add('hidden');
-        logMessage('Connected to Gemini 2.0 Flash Multimodal Live API', 'system');
+        if (connectIcon) {
+            connectIcon.textContent = 'cloud_done';
+            connectButton.classList.add('connected');
+            messageInput.disabled = false;
+            sendButton.disabled = false;
+            micButton.disabled = false;
+            cameraButton.disabled = false;
+            screenButton.disabled = false;
+            header.classList.add('hidden');
+            logMessage('Connected to Gemini 2.0 Flash Multimodal Live API', 'system');
+        } else {
+            throw new Error('Connect button icon not found');
+        }
     } catch (error) {
         const errorMessage = error.message || 'Unknown error';
         Logger.error('Connection error:', error);
         logMessage(`Connection error: ${errorMessage}`, 'system');
         isConnected = false;
-        connectButton.textContent = 'Connect';
+        
+        // 重置連接按鈕狀態
+        const connectIcon = connectButton.querySelector('.material-symbols-outlined');
+        if (connectIcon) {
+            connectIcon.textContent = 'cloud_off';
+        } else {
+            // 如果圖標不存在，重新創建
+            const newConnectIcon = document.createElement('span');
+            newConnectIcon.className = 'material-symbols-outlined';
+            newConnectIcon.textContent = 'cloud_off';
+            connectButton.innerHTML = '';
+            connectButton.appendChild(newConnectIcon);
+        }
+        
         connectButton.classList.remove('connected');
         messageInput.disabled = true;
         sendButton.disabled = true;
         micButton.disabled = true;
         cameraButton.disabled = true;
         screenButton.disabled = true;
+        header.classList.remove('hidden');
     }
 }
 
@@ -488,14 +506,28 @@ function disconnectFromWebsocket() {
         isRecording = false;
         updateMicIcon();
     }
+    // 重置連接按鈕狀態
     const connectIcon = connectButton.querySelector('.material-symbols-outlined');
-    connectIcon.textContent = 'cloud_off';
+    if (connectIcon) {
+        connectIcon.textContent = 'cloud_off';
+    } else {
+        // 如果圖標不存在，重新創建
+        const newConnectIcon = document.createElement('span');
+        newConnectIcon.className = 'material-symbols-outlined';
+        newConnectIcon.textContent = 'cloud_off';
+        connectButton.innerHTML = '';
+        connectButton.appendChild(newConnectIcon);
+    }
+
+    // 重置所有按鈕狀態
     connectButton.classList.remove('connected');
     messageInput.disabled = true;
     sendButton.disabled = true;
     micButton.disabled = true;
     cameraButton.disabled = true;
     screenButton.disabled = true;
+    
+    // 顯示header並記錄日誌
     header.classList.remove('hidden');
     logMessage('Disconnected from server', 'system');
     
@@ -679,10 +711,19 @@ connectButton.addEventListener('click', () => {
     }
 });
 
+// 初始化按鈕狀態
 messageInput.disabled = true;
 sendButton.disabled = true;
 micButton.disabled = true;
-connectButton.textContent = 'Connect';
+cameraButton.disabled = true;
+screenButton.disabled = true;
+
+// 初始化connect按鈕
+const connectIcon = document.createElement('span');
+connectIcon.className = 'material-symbols-outlined';
+connectIcon.textContent = 'cloud_off';
+connectButton.innerHTML = '';
+connectButton.appendChild(connectIcon);
 
 /**
  * Handles the video toggle. Starts or stops video streaming.
