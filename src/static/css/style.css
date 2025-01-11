@@ -325,8 +325,9 @@ button:disabled {
 
 .log-entry.user::before {
     content: "😊";
-    font-size: 24px;
+    font-size: 16px;
     margin: 0 8px;
+    line-height: 1;
 }
 
 .log-entry.system {
