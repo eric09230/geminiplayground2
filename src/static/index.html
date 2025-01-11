@@ -16,17 +16,6 @@
 <body>
     <div class="modal-backdrop"></div>
     <div id="app">
-        <div class="api-key-section">
-            <div class="api-key-container">
-                <h2>Gemini 2.0 Flash Multimodal Live API Client</h2>
-                <div class="api-key-input">
-                    <label for="api-key">API Key</label>
-                    <input type="text" id="api-key" placeholder="請輸入您的 Gemini API Key" />
-                    <button id="connect-button" class="connect-btn">Connect</button>
-                </div>
-                <p class="api-key-hint">請先輸入 API Key 後點擊連接按鈕開始使用</p>
-            </div>
-        </div>
         <div id="config-container" class="hidden-mobile">
             <div class="config-wrapper">
                 <div class="setting-container">
@@ -92,9 +81,14 @@
                 <button id="screen-button">
                     <span id="screen-icon" class="material-symbols-outlined">screen_share</span>
                 </button>
-                <button id="connect-button">
-                    <span class="material-symbols-outlined">cloud_off</span>
-                </button>
+            </div>
+        </div>
+        <div class="header">
+            <div class="api-input-container">
+                <input type="password" id="api-key" placeholder="Please Input Gemini API Key" />
+            </div>
+            <div class="header-buttons">
+                <button id="connect-button">Connect</button>
                 <button id="config-toggle" class="material-symbols-outlined">settings</button>
             </div>
         </div>
