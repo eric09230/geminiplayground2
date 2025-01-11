@@ -206,20 +206,20 @@ function logMessage(message, type = 'system') {
     timestamp.textContent = new Date().toLocaleTimeString();
     logEntry.appendChild(timestamp);
 
-    const emoji = document.createElement('span');
-    emoji.classList.add('emoji');
-    switch (type) {
-        case 'system':
-            emoji.textContent = '⚙️';
-            break;
-        case 'user':
-            emoji.textContent = '😊';
-            break;
-        case 'ai':
-            emoji.textContent = '🤖';
-            break;
+    // 只為系統和 AI 消息添加表情圖標
+    if (type !== 'user') {
+        const emoji = document.createElement('span');
+        emoji.classList.add('emoji');
+        switch (type) {
+            case 'system':
+                emoji.textContent = '⚙️';
+                break;
+            case 'ai':
+                emoji.textContent = '🤖';
+                break;
+        }
+        logEntry.appendChild(emoji);
     }
-    logEntry.appendChild(emoji);
 
     const messageText = document.createElement('span');
     messageText.textContent = message;
