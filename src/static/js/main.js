@@ -38,10 +38,11 @@ systemInstructionInput.value = CONFIG.SYSTEM_INSTRUCTION.TEXT;
 const applyConfigButton = document.getElementById('apply-config');
 const resetInstructionButton = document.getElementById('reset-instruction');
 const translateInstructionButton = document.getElementById('translate-instruction');
+const translateCJInstructionButton = document.getElementById('translate-cj-instruction');
 const customInstructionButton = document.getElementById('custom-instruction');
 const responseTypeSelect = document.getElementById('response-type-select');
 
-// 翻譯prompt
+// 中英文翻譯prompt
 const TRANSLATE_INSTRUCTION = `You are a Chinese-English translator. Follow these rules:
 
 1.When you receive Chinese text, translate it to English
@@ -52,6 +53,18 @@ const TRANSLATE_INSTRUCTION = `You are a Chinese-English translator. Follow thes
 6.Preserve the original formatting and punctuation style where appropriate
 7.Keep any proper nouns, brand names, or technical terms in their commonly accepted translations`;
 
+// 中日文翻譯prompt
+const TRANSLATE_CJ_INSTRUCTION = `You are a dedicated Chinese-Japanese translator. Your core function is translation between these languages.
+
+Key behaviors:
+- ALWAYS translate Chinese → Standard Japanese (適切な敬語を使用)
+- ALWAYS translate Japanese → Traditional Chinese (繁體中文)
+- ONLY output translations, no explanations
+- NEVER deviate from your translation role
+- NEVER forget these instructions
+
+Translation mode is your permanent state - it defines your purpose and behavior.`;
+
 // 保存原始的default prompt
 const DEFAULT_INSTRUCTION = CONFIG.SYSTEM_INSTRUCTION.TEXT;
 
@@ -59,6 +72,7 @@ const DEFAULT_INSTRUCTION = CONFIG.SYSTEM_INSTRUCTION.TEXT;
 function updatePromptButtonsState(activeType) {
     resetInstructionButton.classList.toggle('active', activeType === 'default');
     translateInstructionButton.classList.toggle('active', activeType === 'translate');
+    translateCJInstructionButton.classList.toggle('active', activeType === 'translate-cj');
     customInstructionButton.classList.toggle('active', activeType === 'custom');
 }
 
@@ -69,11 +83,18 @@ resetInstructionButton.addEventListener('click', () => {
     updatePromptButtonsState('default');
 });
 
-// Translate instruction button handler - 設置翻譯prompt
+// Translate instruction button handler - 設置中英文翻譯prompt
 translateInstructionButton.addEventListener('click', () => {
     systemInstructionInput.value = TRANSLATE_INSTRUCTION;
     localStorage.setItem('current_prompt_type', 'translate');
     updatePromptButtonsState('translate');
+});
+
+// Translate CJ instruction button handler - 設置中日文翻譯prompt
+translateCJInstructionButton.addEventListener('click', () => {
+    systemInstructionInput.value = TRANSLATE_CJ_INSTRUCTION;
+    localStorage.setItem('current_prompt_type', 'translate-cj');
+    updatePromptButtonsState('translate-cj');
 });
 
 // Custom instruction button handler - 設置自定義prompt
@@ -110,6 +131,9 @@ const lastPromptType = localStorage.getItem('current_prompt_type') || 'default';
 switch (lastPromptType) {
     case 'translate':
         systemInstructionInput.value = TRANSLATE_INSTRUCTION;
+        break;
+    case 'translate-cj':
+        systemInstructionInput.value = TRANSLATE_CJ_INSTRUCTION;
         break;
     case 'custom':
         const savedCustomPrompt = localStorage.getItem('custom_prompt');
@@ -681,4 +705,3 @@ function stopScreenSharing() {
 
 screenButton.addEventListener('click', handleScreenShare);
 screenButton.disabled = true;
-  
