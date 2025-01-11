@@ -201,11 +201,6 @@ function logMessage(message, type = 'system') {
     const logEntry = document.createElement('div');
     logEntry.classList.add('log-entry', type);
 
-    const timestamp = document.createElement('span');
-    timestamp.classList.add('timestamp');
-    timestamp.textContent = new Date().toLocaleTimeString();
-    logEntry.appendChild(timestamp);
-
     // 只為系統和 AI 消息添加表情圖標
     if (type !== 'user') {
         const emoji = document.createElement('span');

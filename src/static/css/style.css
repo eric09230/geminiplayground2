@@ -319,10 +319,6 @@ button:disabled {
     padding: 10px 16px;
 }
 
-.log-entry.user .timestamp {
-    color: rgba(255, 255, 255, 0.9);
-}
-
 .log-entry.user::before {
     content: "😊";
     font-size: 16px;
@@ -337,12 +333,6 @@ button:disabled {
 
 .log-entry.ai {
     background: rgba(24,128,56,0.1);
-}
-
-.timestamp {
-    font-size: 12px;
-    color: var(--text-secondary);
-    min-width: 70px;
 }
 
 .emoji {
