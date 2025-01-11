@@ -258,6 +258,14 @@ button:disabled {
     font-size: 16px;
     outline: none;
     transition: var(--transition);
+    min-width: 0;
+    max-width: 100%;
+    min-height: 48px;
+    max-height: 150px;
+    overflow-y: auto;
+    word-wrap: break-word;
+    word-break: break-all;
+    resize: vertical;
 }
 
 #message-input:focus {
@@ -532,6 +540,7 @@ button:not(:disabled):active {
 
     #message-input {
         flex: 1;
+        max-height: 120px; /* 移動端稍微降低最大高度 */
     }
 
     .media-buttons {
