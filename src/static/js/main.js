@@ -225,8 +225,7 @@ function logMessage(message, type = 'system') {
     messageText.textContent = message;
     logEntry.appendChild(messageText);
 
-    logsContainer.appendChild(logEntry);
-    logsContainer.scrollTop = logsContainer.scrollHeight;
+    logsContainer.prepend(logEntry);
 }
 
 // 添加系統訊息顯示設定的變更監聽
