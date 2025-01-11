@@ -76,12 +76,8 @@ export class VideoManager {
         this.framePreview.id = 'frame-preview';
         this.framePreview.width = 320;
         this.framePreview.height = 240;
+        this.framePreview.style.display = 'none';  // 隱藏 framePreview canvas
         this.videoContainer.appendChild(this.framePreview);
-
-        // Add click handler to toggle preview size
-        this.framePreview.addEventListener('click', () => {
-            this.framePreview.classList.toggle('enlarged');
-        });
     }
 
     /**
