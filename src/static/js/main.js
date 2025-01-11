@@ -192,6 +192,25 @@ const client = new MultimodalLiveClient();
  * @param {string} message - The message to log.
  * @param {string} [type='system'] - The type of the message (system, user, ai).
  */
+// 檢測虛擬鍵盤狀態
+let isKeyboardOpen = false;
+const visualViewport = window.visualViewport;
+
+if (visualViewport) {
+    visualViewport.addEventListener('resize', () => {
+        const newKeyboardOpen = window.innerHeight - visualViewport.height > 150;
+        if (newKeyboardOpen !== isKeyboardOpen) {
+            isKeyboardOpen = newKeyboardOpen;
+            document.body.classList.toggle('keyboard-open', isKeyboardOpen);
+            if (isKeyboardOpen) {
+                setTimeout(() => {
+                    logsContainer.scrollTop = logsContainer.scrollHeight;
+                }, 100);
+            }
+        }
+    });
+}
+
 function logMessage(message, type = 'system') {
     // 如果是系統訊息且設定為不顯示，則直接返回
     if (type === 'system' && !showSystemMessages.checked) {
@@ -226,7 +245,11 @@ function logMessage(message, type = 'system') {
     logEntry.appendChild(messageText);
 
     logsContainer.appendChild(logEntry);
-    logsContainer.scrollTop = logsContainer.scrollHeight;
+    
+    // 使用 requestAnimationFrame 確保平滑滾動
+    requestAnimationFrame(() => {
+        logEntry.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    });
 }
 
 // 添加系統訊息顯示設定的變更監聽

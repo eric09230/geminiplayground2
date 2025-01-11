@@ -238,10 +238,32 @@ button:disabled {
 
 /* Chat Controls */
 .chat-controls {
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 20px);
+    max-width: 1160px;
     display: flex;
     flex-direction: column;
     gap: 12px;
-    margin: 20px 0;
+    background: var(--surface-color);
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: var(--shadow-1);
+    z-index: 2;
+}
+
+/* 移動端虛擬鍵盤適配 */
+@supports (-webkit-touch-callout: none) {
+    .chat-controls {
+        position: sticky;
+        bottom: 0;
+        transform: none;
+        left: 0;
+        width: 100%;
+        border-radius: 12px 12px 0 0;
+    }
 }
 
 .input-container {
@@ -286,12 +308,19 @@ button:disabled {
 
 /* Logs Container */
 #logs-container {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 20px);
+    max-width: 1160px;
+    height: calc(100vh - 160px);
     background: var(--surface-color);
     border-radius: 12px;
     padding: 20px;
-    height: 400px;
     overflow-y: auto;
     box-shadow: var(--shadow-1);
+    z-index: 1;
 }
 
 .log-entry {
@@ -461,19 +490,64 @@ button:not(:disabled):active {
 
 /* Responsive Design */
 @media (max-width: 768px) {
+    body {
+        height: 100vh;
+        height: -webkit-fill-available;
+        overflow: hidden;
+    }
+
     #app {
-        padding: 10px;
-        gap: 8px;
+        padding: 0;
+        height: 100vh;
+        height: -webkit-fill-available;
+        overflow: hidden;
     }
 
     #logs-container {
-        min-height: 200px;
+        top: 0;
+        height: calc(100vh - 140px);
+        width: 100%;
+        border-radius: 0;
+        padding: 10px;
+        transition: height 0.3s ease;
+    }
+
+    .chat-controls {
+        bottom: 0;
+        width: 100%;
+        border-radius: 12px 12px 0 0;
+        padding: 10px;
+        transition: transform 0.3s ease;
     }
 
     .audio-visualizers {
-        flex-direction: row;
-        gap: 8px;
-        margin: 8px 0;
+        position: fixed;
+        bottom: 120px;
+        left: 0;
+        width: 100%;
+        padding: 0 10px;
+        margin: 0;
+        z-index: 2;
+        transition: opacity 0.3s ease;
+    }
+
+    /* 虛擬鍵盤開啟時的樣式 */
+    body.keyboard-open #logs-container {
+        height: calc(100vh - 340px);
+    }
+
+    body.keyboard-open .chat-controls {
+        transform: translateY(0);
+    }
+
+    body.keyboard-open .audio-visualizers {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    /* 確保新消息可見 */
+    .log-entry:last-child {
+        scroll-margin-bottom: 160px;
     }
 
     .visualizer-container {
