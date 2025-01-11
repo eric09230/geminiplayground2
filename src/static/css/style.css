@@ -248,28 +248,16 @@ button:disabled {
     display: flex;
     gap: 8px;
     width: 100%;
-    min-width: 0;
-    flex-wrap: wrap;
 }
 
 #message-input {
-    flex: 1 1 auto;
+    flex: 1;
     padding: 12px 16px;
     border: 1px solid var(--border-color);
     border-radius: 8px;
     font-size: 16px;
     outline: none;
     transition: var(--transition);
-    min-width: 0;
-    max-width: 100%;
-    min-height: 48px;
-    max-height: 150px;
-    overflow-y: auto;
-    white-space: pre-wrap;
-    word-break: break-word;
-    overflow-wrap: break-word;
-    width: 100%;
-    resize: vertical;
 }
 
 #message-input:focus {
@@ -544,7 +532,6 @@ button:not(:disabled):active {
 
     #message-input {
         flex: 1;
-        max-height: 120px; /* 移動端稍微降低最大高度 */
     }
 
     .media-buttons {
