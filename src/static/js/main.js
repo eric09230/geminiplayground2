@@ -192,25 +192,6 @@ const client = new MultimodalLiveClient();
  * @param {string} message - The message to log.
  * @param {string} [type='system'] - The type of the message (system, user, ai).
  */
-// 檢測虛擬鍵盤狀態
-let isKeyboardOpen = false;
-const visualViewport = window.visualViewport;
-
-if (visualViewport) {
-    visualViewport.addEventListener('resize', () => {
-        const newKeyboardOpen = window.innerHeight - visualViewport.height > 150;
-        if (newKeyboardOpen !== isKeyboardOpen) {
-            isKeyboardOpen = newKeyboardOpen;
-            document.body.classList.toggle('keyboard-open', isKeyboardOpen);
-            if (isKeyboardOpen) {
-                setTimeout(() => {
-                    logsContainer.scrollTop = logsContainer.scrollHeight;
-                }, 100);
-            }
-        }
-    });
-}
-
 function logMessage(message, type = 'system') {
     // 如果是系統訊息且設定為不顯示，則直接返回
     if (type === 'system' && !showSystemMessages.checked) {
@@ -246,9 +227,18 @@ function logMessage(message, type = 'system') {
 
     logsContainer.appendChild(logEntry);
     
-    // 使用 requestAnimationFrame 確保平滑滾動
+    // 使用 requestAnimationFrame 確保在 DOM 更新後滾動
     requestAnimationFrame(() => {
-        logEntry.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        // 延遲滾動以處理虛擬鍵盤
+        setTimeout(() => {
+            logsContainer.scrollTop = logsContainer.scrollHeight;
+            // 在移動端，額外檢查並再次滾動
+            if (window.innerWidth <= 768) {
+                setTimeout(() => {
+                    logsContainer.scrollTop = logsContainer.scrollHeight;
+                }, 300); // 虛擬鍵盤彈出的延遲
+            }
+        }, 100);
     });
 }
 
@@ -421,7 +411,8 @@ async function connectToWebsocket() {
         micButton.disabled = false;
         cameraButton.disabled = false;
         screenButton.disabled = false;
-        header.classList.add('hidden');
+        const apiInputContainer = document.querySelector('.api-input-container');
+        apiInputContainer.classList.add('hidden');
         logMessage('Connected to Gemini 2.0 Flash Multimodal Live API', 'system');
     } catch (error) {
         const errorMessage = error.message || 'Unknown error';
@@ -460,7 +451,8 @@ function disconnectFromWebsocket() {
     micButton.disabled = true;
     cameraButton.disabled = true;
     screenButton.disabled = true;
-    header.classList.remove('hidden');
+    const apiInputContainer = document.querySelector('.api-input-container');
+    apiInputContainer.classList.remove('hidden');
     logMessage('Disconnected from server', 'system');
     
     if (videoManager) {
