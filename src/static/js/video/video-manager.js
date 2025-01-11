@@ -26,7 +26,6 @@ export class VideoManager {
         // DOM elements
         this.videoContainer = document.getElementById('video-container');
         this.previewVideo = document.getElementById('preview');
-        this.stopVideoButton = document.getElementById('stop-video');
         this.framePreview = document.createElement('canvas');
         
         // State management
@@ -43,6 +42,7 @@ export class VideoManager {
         this.FORCE_FRAME_INTERVAL = 10; // Send frame every N frames regardless of motion
 
         this.setupFramePreview();
+        this.setupDraggable();
 
         // 摄像头状态，用户切换镜头
         this.facingMode = 'user';
@@ -217,6 +217,76 @@ export class VideoManager {
         this.lastFrameData = null;
         this.lastSignificantFrame = null;
         this.frameCount = 0;
+    }
+
+    /**
+     * 設置視訊容器的拖拽功能
+     * @private
+     */
+    setupDraggable() {
+        let isDragging = false;
+        let currentX;
+        let currentY;
+        let initialX;
+        let initialY;
+        let xOffset = 0;
+        let yOffset = 0;
+
+        const dragStart = (e) => {
+            if (e.type === "touchstart") {
+                initialX = e.touches[0].clientX - xOffset;
+                initialY = e.touches[0].clientY - yOffset;
+            } else {
+                initialX = e.clientX - xOffset;
+                initialY = e.clientY - yOffset;
+            }
+
+            if (e.target === this.videoContainer) {
+                isDragging = true;
+            }
+        };
+
+        const dragEnd = () => {
+            isDragging = false;
+        };
+
+        const drag = (e) => {
+            if (isDragging) {
+                e.preventDefault();
+
+                if (e.type === "touchmove") {
+                    currentX = e.touches[0].clientX - initialX;
+                    currentY = e.touches[0].clientY - initialY;
+                } else {
+                    currentX = e.clientX - initialX;
+                    currentY = e.clientY - initialY;
+                }
+
+                xOffset = currentX;
+                yOffset = currentY;
+
+                // 確保不會拖出視窗範圍
+                const containerRect = this.videoContainer.getBoundingClientRect();
+                const maxX = window.innerWidth - containerRect.width;
+                const maxY = window.innerHeight - containerRect.height;
+
+                currentX = Math.min(Math.max(0, currentX), maxX);
+                currentY = Math.min(Math.max(0, currentY), maxY);
+
+                this.videoContainer.style.transform =
+                    `translate3d(${currentX}px, ${currentY}px, 0)`;
+            }
+        };
+
+        // 滑鼠事件
+        this.videoContainer.addEventListener('mousedown', dragStart);
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('mouseup', dragEnd);
+
+        // 觸摸事件
+        this.videoContainer.addEventListener('touchstart', dragStart);
+        document.addEventListener('touchmove', drag, { passive: false });
+        document.addEventListener('touchend', dragEnd);
     }
 
 
